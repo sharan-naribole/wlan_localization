@@ -1,0 +1,73 @@
+# Default configuration for WLAN Indoor Localization
+
+experiment:
+  name: "wlan_localization_default"
+  seed: 42
+  mlflow_tracking: true
+
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  train_file: "trainingData.csv"
+  test_file: "validationData.csv"
+  test_size: 0.1
+  missing_value: 100
+  min_aps_detected: 1
+  remove_zero_var: true
+
+preprocessing:
+  missing_value: 100.0
+  apply_box_cox: true
+  n_components: 150
+  explained_variance: 0.95
+
+models:
+  building_classifier:
+    type: "RandomForest"
+    n_estimators: 100
+    random_state: 42
+    balancing_strategy: "nearmiss"  # Options: "nearmiss", "smote", null
+    max_depth: null
+    min_samples_split: 2
+    min_samples_leaf: 1
+
+  floor_classifier:
+    type: "KNN"
+    k: 3
+    metric: "manhattan"  # Options: "manhattan", "euclidean", "minkowski"
+    weights: "distance"  # Options: "uniform", "distance"
+    per_building: true
+
+  position_regressor:
+    type: "WeightedKNN"
+    k: 3
+    metric: "manhattan"
+    weights: "distance"
+    per_building_floor: true
+
+training:
+  cross_validation:
+    enabled: true
+    outer_folds: 5
+    inner_folds: 2
+    stratify_by: "BUILDINGID"
+
+evaluation:
+  penalties:
+    building_error: 50.0
+    floor_error: 4.0
+  metrics:
+    - "positioning_error"
+    - "euclidean_distance"
+    - "building_accuracy"
+    - "floor_accuracy"
+    - "rmse_per_location"
+
+  save_predictions: true
+  plot_results: true
+
+output:
+  model_dir: "models"
+  reports_dir: "reports"
+  figures_dir: "reports/figures"
+  metrics_dir: "reports/metrics"

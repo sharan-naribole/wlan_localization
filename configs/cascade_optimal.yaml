@@ -1,0 +1,98 @@
+# Optimal cascade configuration based on experimental results
+# Achieves 2.6-8.2m RMSE across buildings/floors
+
+experiment:
+  name: "cascade_knn_optimal"
+  description: "Best performing cascade pipeline with weighted KNN"
+  seed: 42
+  mlflow_tracking: true
+
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  train_file: "trainingData.csv"
+  test_file: "validationData.csv"
+  test_size: 0.1
+  missing_value: 100
+  min_aps_detected: 1
+  remove_zero_var: true
+  stratify_split: true
+
+preprocessing:
+  missing_value: 100.0
+  apply_box_cox: true  # Addresses right-skewed RSSI distributions
+  n_components: 150    # Retains 95% variance from 520 APs
+  explained_variance: 0.95
+
+models:
+  # Stage 1: Building Classification
+  # Random Forest with NearMiss achieves 99.4% accuracy
+  building_classifier:
+    type: "RandomForest"
+    n_estimators: 100
+    random_state: 42
+    balancing_strategy: "nearmiss"  # Handles class imbalance
+    max_depth: null  # No limit
+    min_samples_split: 2
+    min_samples_leaf: 1
+
+  # Stage 2: Per-Building Floor Classification
+  # Weighted KNN achieves 94-98% accuracy per building
+  floor_classifier:
+    type: "KNN"
+    k: 3  # Optimal from grid search
+    metric: "manhattan"  # Better for sparse high-dimensional data
+    weights: "distance"  # Closer neighbors weighted more
+    per_building: true  # Separate model per building
+
+  # Stage 3: Per-Building-Floor Position Regression
+  # Weighted KNN achieves 2.6-8.2m RMSE
+  position_regressor:
+    type: "WeightedKNN"
+    k: 3  # Optimal from grid search
+    metric: "manhattan"
+    weights: "distance"  # Distance-weighted for spatial interpolation
+    per_building_floor: true  # 13 separate models
+
+training:
+  cross_validation:
+    enabled: true
+    outer_folds: 5  # For model evaluation
+    inner_folds: 2  # For hyperparameter tuning
+    stratify_by: "BUILDINGID"  # Maintain class balance
+
+evaluation:
+  # Penalties from EvAAL-ETRI 2015 competition
+  penalties:
+    building_error: 50.0  # 50m penalty for wrong building
+    floor_error: 4.0      # 4m penalty for wrong floor
+
+  metrics:
+    - "positioning_error"      # Main metric with penalties
+    - "euclidean_distance"     # Pure distance error
+    - "building_accuracy"      # Building classification accuracy
+    - "floor_accuracy"         # Floor classification accuracy
+    - "rmse_per_location"      # Per-(building,floor) RMSE
+
+  save_predictions: true
+  plot_results: true
+  detailed_report: true
+
+output:
+  model_dir: "models/cascade_optimal"
+  reports_dir: "reports"
+  figures_dir: "reports/figures"
+  metrics_dir: "reports/metrics"
+  save_format: "pkl"  # Options: "pkl", "joblib"
+
+# Expected Performance Benchmarks
+# (from original notebooks)
+expected_performance:
+  building_accuracy: 0.994
+  floor_accuracy_building_0: 0.943
+  floor_accuracy_building_1: 0.956
+  floor_accuracy_building_2: 0.975
+  best_rmse: 2.65  # Building 1, Floor 2
+  worst_rmse: 6.76  # Building 2, Floor 4
+  mean_positioning_error: 5.28
+  global_knn_baseline: 5.69  # Without cascade

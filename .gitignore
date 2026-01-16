@@ -1,0 +1,161 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# IPython
+profile_default/
+ipython_config.py
+
+# PyCharm
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# pytest
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Type checking
+.pyre/
+.pytype/
+
+# MLflow
+mlruns/
+mlartifacts/
+
+# Data files (large files should not be in git)
+data/raw/*.csv
+data/processed/*.csv
+data/processed/*.parquet
+data/processed/*.h5
+data/processed/*.hdf5
+*.pckl
+*.pkl
+*.pickle
+
+# Keep directory structure but not files
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/splits/.gitkeep
+
+# Model files (too large for git)
+models/**/*.pkl
+models/**/*.h5
+models/**/*.pt
+models/**/*.pth
+models/**/*.onnx
+models/**/*.joblib
+
+# Keep model directory structure
+!models/.gitkeep
+!models/**/.gitkeep
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Reports (generated files)
+reports/figures/*.png
+reports/figures/*.jpg
+reports/figures/*.pdf
+reports/metrics/*.json
+reports/metrics/*.csv
+
+# Keep report directory structure
+!reports/figures/.gitkeep
+!reports/metrics/.gitkeep
+
+# Optuna
+.optuna/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# Documentation build
+docs/_build/
+docs/_static/
+docs/_templates/
+site/
+
+# Environment files (may contain secrets)
+.env
+.env.local
+.env.*.local
+
+# Backup files
+*.bak
+*.backup
+
+# Archives
+*.zip
+*.tar.gz
+*.rar
+
+# IDE specific
+*.sublime-project
+*.sublime-workspace
