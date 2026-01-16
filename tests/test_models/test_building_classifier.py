@@ -98,7 +98,11 @@ class TestBuildingClassifier:
 
         # Make data imbalanced
         # Keep all building 0 samples, reduce others
-        mask = (y == 0) | ((y == 1) & (np.random.rand(len(y)) < 0.3)) | ((y == 2) & (np.random.rand(len(y)) < 0.3))
+        mask = (
+            (y == 0)
+            | ((y == 1) & (np.random.rand(len(y)) < 0.3))
+            | ((y == 2) & (np.random.rand(len(y)) < 0.3))
+        )
         X_imb, y_imb = X[mask], y[mask]
 
         clf = BuildingClassifier(

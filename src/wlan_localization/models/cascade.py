@@ -1,7 +1,7 @@
 """Cascade pipeline orchestrating building→floor→position prediction."""
 
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 import joblib
 import numpy as np
@@ -148,9 +148,6 @@ class CascadePipeline:
         # Stage 1: Building Classification
         logger.info("\n[Stage 1] Building Classification")
         self.building_clf.fit(X_processed, y["BUILDINGID"].values)
-
-        # Get building predictions for training data
-        y_building_pred = self.building_clf.predict(X_processed)
 
         # Stage 2: Per-Building Floor Classification
         logger.info("\n[Stage 2] Per-Building Floor Classification")
@@ -317,7 +314,7 @@ class CascadePipeline:
         self,
         X: NDArray[np.float64],
         y_true: Optional[pd.DataFrame] = None
-    ) -> Dict[str, any]:
+    ) -> Dict[str, Any]:
         """Get predictions and metrics for each pipeline stage.
 
         Useful for debugging and analyzing cascade performance.

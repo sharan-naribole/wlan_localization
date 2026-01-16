@@ -110,9 +110,9 @@ def main(
     logger.info(f"  ├─ Euclidean Distance: {metrics['mean_euclidean_distance']:.2f}m")
     logger.info(f"  ├─ Building Penalty: {building_penalty}m × failures")
     logger.info(f"  └─ Floor Penalty: {floor_penalty}m × failures")
-    logger.info(f"\nBuilding Classification:")
+    logger.info("\nBuilding Classification:")
     logger.info(f"  └─ Accuracy: {metrics['building_accuracy']:.1%}")
-    logger.info(f"\nFloor Classification:")
+    logger.info("\nFloor Classification:")
     logger.info(f"  └─ Overall Accuracy: {metrics['floor_accuracy']:.1%}")
 
     # Per-building floor accuracy

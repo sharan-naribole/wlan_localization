@@ -1,13 +1,12 @@
 """Visualization functions for model evaluation and analysis."""
 
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from matplotlib.colors import ListedColormap
 from numpy.typing import NDArray
 from sklearn.metrics import ConfusionMatrixDisplay, RocCurveDisplay, confusion_matrix
 from sklearn.model_selection import learning_curve
@@ -220,8 +219,13 @@ def plot_error_distribution(
     median_error = np.median(errors)
     std_error = np.std(errors)
 
-    ax.axvline(mean_error, color="red", linestyle="--", linewidth=2, label=f"Mean: {mean_error:.2f}m")
-    ax.axvline(median_error, color="green", linestyle="--", linewidth=2, label=f"Median: {median_error:.2f}m")
+    ax.axvline(
+        mean_error, color="red", linestyle="--", linewidth=2, label=f"Mean: {mean_error:.2f}m"
+    )
+    ax.axvline(
+        median_error, color="green", linestyle="--", linewidth=2,
+        label=f"Median: {median_error:.2f}m"
+    )
 
     ax.set_xlabel("Positioning Error (meters)")
     ax.set_ylabel("Frequency")

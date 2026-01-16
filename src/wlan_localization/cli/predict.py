@@ -120,7 +120,8 @@ def main(
         # Save as CSV
         # Optionally include input metadata
         if "TIMESTAMP" in data.columns or "USERID" in data.columns:
-            metadata_cols = [col for col in ["TIMESTAMP", "USERID", "PHONEID"] if col in data.columns]
+            possible_cols = ["TIMESTAMP", "USERID", "PHONEID"]
+            metadata_cols = [col for col in possible_cols if col in data.columns]
             result_df = pd.concat([
                 data[metadata_cols].reset_index(drop=True),
                 predictions_df.reset_index(drop=True)
@@ -147,9 +148,11 @@ def main(
         # Print sample predictions
         logger.info("\nSample predictions:")
         for i, pred in enumerate(predictions_list[:5]):
-            logger.info(f"  Sample {i+1}: Building {pred['BUILDINGID']}, "
-                       f"Floor {pred['FLOOR']}, "
-                       f"Location ({pred['LATITUDE']:.2f}, {pred['LONGITUDE']:.2f})")
+            logger.info(
+                f"  Sample {i+1}: Building {pred['BUILDINGID']}, "
+                f"Floor {pred['FLOOR']}, "
+                f"Location ({pred['LATITUDE']:.2f}, {pred['LONGITUDE']:.2f})"
+            )
 
     logger.info("\n" + "=" * 80)
     logger.info("PREDICTION COMPLETE")

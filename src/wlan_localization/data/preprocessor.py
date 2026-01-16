@@ -1,9 +1,8 @@
 """Data preprocessing pipeline for RSSI signals."""
 
-from typing import Optional, Tuple
+from typing import Optional
 
 import numpy as np
-import pandas as pd
 from numpy.typing import NDArray
 from scipy import stats
 from sklearn.decomposition import PCA

@@ -48,6 +48,7 @@ logger = get_logger(__name__)
 )
 @click.option(
     "--mlflow/--no-mlflow",
+    "use_mlflow",
     default=True,
     help="Enable MLflow experiment tracking",
 )
@@ -69,7 +70,7 @@ def main(
     output: Path,
     test_size: float,
     random_state: int,
-    mlflow: bool,
+    use_mlflow: bool,
     experiment_name: str,
     run_name: Optional[str],
 ) -> None:
@@ -88,7 +89,7 @@ def main(
         config_dict = yaml.safe_load(f)
 
     # Initialize MLflow if enabled
-    if mlflow:
+    if use_mlflow:
         mlflow.set_experiment(experiment_name)
         run = mlflow.start_run(run_name=run_name)
         logger.info(f"MLflow tracking enabled - Run ID: {run.info.run_id}")
@@ -136,11 +137,18 @@ def main(
         _log_metrics(holdout_metrics, prefix="holdout_")
 
         # Log metrics to MLflow
-        if mlflow:
-            mlflow.log_metrics({
-                **{f"train_{k}": v for k, v in train_metrics.items() if isinstance(v, (int, float))},
-                **{f"holdout_{k}": v for k, v in holdout_metrics.items() if isinstance(v, (int, float))},
-            })
+        if use_mlflow:
+            train_log = {
+                f"train_{k}": v
+                for k, v in train_metrics.items()
+                if isinstance(v, (int, float))
+            }
+            holdout_log = {
+                f"holdout_{k}": v
+                for k, v in holdout_metrics.items()
+                if isinstance(v, (int, float))
+            }
+            mlflow.log_metrics({**train_log, **holdout_log})
 
         # Save model
         logger.info(f"\nSaving model to {output}")
@@ -158,7 +166,7 @@ def main(
         logger.info(f"Metrics saved to {metrics_file}")
 
         # Log model to MLflow
-        if mlflow:
+        if use_mlflow:
             mlflow.log_artifacts(str(output))
             logger.info("Model artifacts logged to MLflow")
 
@@ -172,12 +180,12 @@ def main(
 
     except Exception as e:
         logger.error(f"Training failed: {e}", exc_info=True)
-        if mlflow:
+        if use_mlflow:
             mlflow.log_param("status", "failed")
         raise
 
     finally:
-        if mlflow:
+        if use_mlflow:
             mlflow.end_run()
 
 

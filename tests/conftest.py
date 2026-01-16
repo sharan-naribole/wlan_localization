@@ -125,7 +125,8 @@ def sample_predictions():
 
     # Add some classification errors
     building_error_mask = np.random.rand(n_samples) < 0.05  # 5% error rate
-    y_pred.loc[building_error_mask, "BUILDINGID"] = np.random.choice([0, 1, 2], building_error_mask.sum())
+    n_building_errors = building_error_mask.sum()
+    y_pred.loc[building_error_mask, "BUILDINGID"] = np.random.choice([0, 1, 2], n_building_errors)
 
     floor_error_mask = np.random.rand(n_samples) < 0.1  # 10% error rate
     y_pred.loc[floor_error_mask, "FLOOR"] = np.random.choice([0, 1, 2, 3], floor_error_mask.sum())
